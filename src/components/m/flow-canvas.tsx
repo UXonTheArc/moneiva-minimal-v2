@@ -114,7 +114,7 @@ export function FlowCanvas({ items, numbers, selected, onSelect, collapsed, onTo
     const el = inner.current
     if (!b || !el) return null
     const all = Math.min(1, Math.max(0.3, (b.clientWidth - 48) / el.offsetWidth))
-    const s = mode === "all" ? all : Math.max(all, Math.min(0.8, b.clientWidth / 900))
+    const s = mode === "all" ? all : Math.max(all, Math.min(0.8, Math.max(0.65, b.clientWidth / 900)))
     return { x: (b.clientWidth - el.offsetWidth * s) / 2, y: 24 + 48, s }
   }, [mode])
 
