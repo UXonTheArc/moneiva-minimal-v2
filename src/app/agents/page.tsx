@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation"
+import { AgentsList } from "@/components/m/automate"
 
-// Old address from earlier versions.
-export default function Page() {
-  redirect("/automate")
+export default function AgentsPage() {
+  return <AgentsList />
 }

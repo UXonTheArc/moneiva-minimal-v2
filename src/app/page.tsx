@@ -1,20 +1,24 @@
 "use client"
 
 import Link from "next/link"
-import { AlertCircle, ArrowRight, Check, GraduationCap } from "lucide-react"
+import { AlertCircle, ArrowRight, Check, GraduationCap, MessageSquare } from "lucide-react"
 
+import { WorkflowRow } from "@/components/m/automate"
 import { KindIcon } from "@/components/m/kind-icon"
 import { useDone } from "@/components/m/store"
 import { Card, Dot, Group, Icon, Journey, PageTitle, Row, Section, btn } from "@/components/m/ui"
 import { AGENTS } from "@/lib/moneiva/agents-data"
 import { ME } from "@/lib/moneiva/data"
-import { AGENT_STAGE, REVIEW_ITEMS, STAGE_INFO, TEACH_ITEMS, TODAY, TOTALS, agentState } from "@/lib/minimal"
+import { AGENT_STAGE, REVIEW_ITEMS, RUNS_TODAY, STAGE_INFO, TEACH_ITEMS, TODAY, TOTALS, WORKFLOWS, agentState } from "@/lib/minimal"
+import { ZOOM_CONNECTIONS } from "@/lib/moneiva/phone-check-data"
 
 export default function TodayPage() {
   const isDone = useDone()
   const left = REVIEW_ITEMS.filter((i) => !isDone(i.id)).length
   const teachLeft = TEACH_ITEMS.filter((t) => !isDone(t.kind === "new" ? t.item.id : t.thread.id)).length
-  const stopped = AGENTS.filter((a) => a.status === "error")
+  const stopped = AGENTS.filter((a) => a.status === "error" && !(a.id === "osd" && isDone("osd-fixed")))
+  const zoomSet = ZOOM_CONNECTIONS.some((_, k) => isDone(`zoom:${k}`))
+  const liveFlows = WORKFLOWS.filter((w) => w.status === "live")
   const first = ME.name.split(" ")[0]
 
   return (
@@ -25,7 +29,8 @@ export default function TodayPage() {
         lead={
           <>
             Your agents handled <b className="font-semibold text-foreground">{TOTALS.emails} emails</b> and{" "}
-            <b className="font-semibold text-foreground">{TOTALS.calls} calls</b> today.{" "}
+            <b className="font-semibold text-foreground">{TOTALS.calls} calls</b> today, and your workflows ran{" "}
+            <b className="font-semibold text-foreground">{RUNS_TODAY} times</b>.{" "}
             <b className="font-semibold text-foreground">{TOTALS.onTheirOwn}</b> needed no one.
           </>
         }
@@ -63,17 +68,30 @@ export default function TodayPage() {
         {stopped.map((a) => (
           <Row
             key={a.id}
-            href={`/automate/agents/${a.id}`}
+            href={`/agents/${a.id}`}
             icon={
               <Icon tone="red">
                 <AlertCircle />
               </Icon>
             }
             title={`${a.name} stopped`}
-            sub="Its phone number can no longer place calls. Pick another number to restart it."
+            sub="Its phone number can no longer place calls. 2 workflows that use it are waiting."
             value={<span className="font-medium text-primary">Fix</span>}
           />
         ))}
+        {!zoomSet && (
+          <Row
+            href="/workflows/phonecheck"
+            icon={
+              <Icon tone="amber">
+                <MessageSquare />
+              </Icon>
+            }
+            title="OS&D phone check can't send texts"
+            sub="Its Zoom connection was removed. 5 shipments are waiting at a text step."
+            value={<span className="font-medium text-primary">Fix</span>}
+          />
+        )}
         <Row
           href="/teach/check"
           icon={
@@ -86,7 +104,7 @@ export default function TodayPage() {
         />
       </Group>
 
-      <Section title="Your agents" action={<Link href="/automate" className={btn.plain}>Manage</Link>}>
+      <Section title="Your agents" action={<Link href="/agents" className={btn.plain}>All agents</Link>}>
         <Group>
           {AGENTS.map((a) => {
             const st = agentState(a)
@@ -94,7 +112,7 @@ export default function TodayPage() {
             return (
               <Row
                 key={a.id}
-                href={`/automate/agents/${a.id}`}
+                href={`/agents/${a.id}`}
                 icon={
                   <Icon>
                     <KindIcon kind={a.kind} />
@@ -116,6 +134,14 @@ export default function TodayPage() {
               />
             )
           })}
+        </Group>
+      </Section>
+
+      <Section title="Your workflows" action={<Link href="/workflows" className={btn.plain}>All workflows</Link>}>
+        <Group>
+          {liveFlows.slice(0, 4).map((w) => (
+            <WorkflowRow key={w.id} w={w} compact />
+          ))}
         </Group>
       </Section>
 

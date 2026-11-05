@@ -11,7 +11,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Moneiva",
-  description: "Clickable mockup of the minimal Moneiva redesign. All data is synthetic.",
+  description: "Clickable mockup of the Moneiva Minimal V2 redesign. All data is synthetic.",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

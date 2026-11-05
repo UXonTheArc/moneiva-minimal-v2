@@ -48,6 +48,12 @@ export type WorkflowStep = { title: string; sub: string; agent?: string }
 export type Workflow = (typeof AUTOMATIONS)[number] & { sentence: string; steps: WorkflowStep[] }
 
 const STEPS: Record<string, WorkflowStep[]> = {
+  phonecheck: [
+    { title: "A new OS&D file arrives", sub: "One row for each shipment to check" },
+    { title: "Find a good phone", sub: "Driver, dispatcher, or both" },
+    { title: "Call or text, up to 4 tries", sub: "Calls first, then texts with Zoom SMS", agent: "OS&D check calls" },
+    { title: "Update the shipment", sub: "Marks it Completed with what happened" },
+  ],
   osd: [
     { title: "A damage report arrives", sub: "New email with an overage, shortage or damage report" },
     { title: "Read the report", sub: "Finds the PRO, the delivery site and what was reported", agent: "The Operator" },
@@ -84,6 +90,7 @@ const STEPS: Record<string, WorkflowStep[]> = {
 }
 
 const SENTENCE: Record<string, string> = {
+  phonecheck: "For each shipment in the OS&D file, find a good phone, then call or text the driver or dispatcher until someone answers.",
   osd: "When a damage report comes in, confirm it with the delivery site and tell claims or the customer.",
   late: "Twice a day, get a new ETA for late loads and email the customer.",
   missed: "When someone leaves a voicemail after hours, email them back.",
@@ -98,6 +105,21 @@ export const WORKFLOWS: Workflow[] = AUTOMATIONS.map((w) => ({
   steps: STEPS[w.id] ?? [],
   sentence: SENTENCE[w.id] ?? w.desc,
 }))
+
+/** What the Workflows list and Today need to show, without opening a workflow. */
+export type WorkflowMeta = { steps: number; runsToday: number; attention?: string; fix?: string; big?: boolean }
+export const WORKFLOW_META: Record<string, WorkflowMeta> = {
+  phonecheck: { steps: 35, runsToday: 4, big: true, attention: "2 text steps can't send and 24 rows are waiting to call", fix: "Fix" },
+  osd: { steps: 8, runsToday: 3, attention: "The last run couldn't finish. OS&D check calls can't place calls.", fix: "Fix" },
+  late: { steps: 3, runsToday: 1 },
+  missed: { steps: 3, runsToday: 2 },
+  latepickup: { steps: 2, runsToday: 1 },
+  kpi: { steps: 2, runsToday: 0 },
+  dedup: { steps: 2, runsToday: 0 },
+  holiday: { steps: 2, runsToday: 0 },
+}
+export const metaFor = (id: string): WorkflowMeta => WORKFLOW_META[id] ?? { steps: 0, runsToday: 0 }
+export const RUNS_TODAY = Object.values(WORKFLOW_META).reduce((n, m) => n + m.runsToday, 0)
 
 export const workflowById = (id: string) => WORKFLOWS.find((w) => w.id === id)
 

@@ -16,13 +16,20 @@ import type { Agent } from "@/lib/moneiva/agents-data"
 import { FLOWS, PROFILE_OPTIONS, RUNSET, TEST_EMAIL, USED } from "@/lib/moneiva/agents-extra-data"
 import { REQUEST_TYPES, STAGES } from "@/lib/moneiva/data"
 import { AGENT_STAGE, AGENT_STATUS, REVIEW_ITEMS, STAGE_INFO, WORKFLOWS } from "@/lib/minimal"
-import { useDone } from "@/components/m/store"
+import { markDone, useDone } from "@/components/m/store"
 
 type Panel = "who" | "tools" | "how" | "test" | null
 const NUMBERS = ["(555) 010-0211", "(555) 010-0233", "(555) 010-0275"]
 
 export function AgentDetail({ agent: a }: { agent: Agent }) {
-  const [broken, setBroken] = useState(a.status === "error")
+  const isDoneFix = useDone()
+  const [brokenLocal, setBrokenLocal] = useState(a.status === "error")
+  // Fixing OS&D check calls also clears it on Today and in the workflows that call it.
+  const broken = brokenLocal && !(a.id === "osd" && isDoneFix("osd-fixed"))
+  const setBroken = (v: boolean) => {
+    setBrokenLocal(v)
+    if (!v && a.id === "osd") markDone("osd-fixed")
+  }
   const [status, setStatus] = useState<RunStatus>(a.status === "off" ? "off" : a.status === "paused" ? "paused" : a.status === "test" ? "test" : "live")
   const [picking, setPicking] = useState(false)
   const [panel, setPanel] = useState<Panel>(null)
@@ -35,7 +42,7 @@ export function AgentDetail({ agent: a }: { agent: Agent }) {
 
   return (
     <>
-      <BackLink href="/automate" label="Automate" />
+      <BackLink href="/agents" label="Agents" />
 
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-5">
@@ -158,7 +165,7 @@ export function AgentDetail({ agent: a }: { agent: Agent }) {
           <Group>
             {USED[a.id].map((u) => {
               const w = WORKFLOWS.find((x) => x.name === u.name)
-              return <Row key={u.name} href={w ? `/automate/workflows/${w.id}` : "/automate?view=workflows"} icon={<Icon><WorkflowIcon /></Icon>} title={u.name} sub={u.sub} />
+              return <Row key={u.name} href={w ? `/workflows/${w.id}` : "/workflows"} icon={<Icon><WorkflowIcon /></Icon>} title={u.name} sub={u.sub} />
             })}
           </Group>
         </Section>

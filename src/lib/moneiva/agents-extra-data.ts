@@ -103,7 +103,10 @@ export const USED: Record<AgentId, UsedIn[]> = {
   ],
   phone: [{ name: "Missed call follow-up", sub: "Its voicemails start this workflow", href: "/workflows" }],
   check: [{ name: "Late load updates", sub: "Its new ETAs go to the Operator to email out", href: "/workflows" }],
-  osd: [{ name: "Damage report follow-up", sub: "Calls the site after the Operator reads the report", href: "/workflows/damage-report" }],
+  osd: [
+    { name: "OS&D phone check", sub: "Calls the driver or dispatcher for each shipment in the OS&D file", href: "/workflows/phonecheck" },
+    { name: "Damage report follow-up", sub: "Calls the site after the Operator reads the report", href: "/workflows/damage-report" },
+  ],
   cat: [],
 }
 

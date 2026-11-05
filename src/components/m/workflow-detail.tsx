@@ -43,7 +43,7 @@ export function WorkflowDetail({ w }: { w: Workflow }) {
 
   return (
     <>
-      <BackLink href="/automate?view=workflows" label="Workflows" />
+      <BackLink href="/workflows" label="Workflows" />
 
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-5">
@@ -56,7 +56,7 @@ export function WorkflowDetail({ w }: { w: Workflow }) {
         </div>
         </div>
         <div className="flex items-center gap-2">
-        <Link href={`/automate/workflows/${w.id}/edit`} className={btn.secondary}>
+        <Link href={`/workflows/${w.id}/edit`} className={btn.secondary}>
           Edit
         </Link>
         <StatusMenu
@@ -80,7 +80,7 @@ export function WorkflowDetail({ w }: { w: Workflow }) {
           <div className="flex-1">
             <div className="text-[17px] font-semibold">The last run couldn&apos;t finish</div>
             <p className="mt-1 text-[15px] text-muted-foreground">OS&amp;D check calls can&apos;t place calls. Fix the agent and the report runs again.</p>
-            <Link href="/automate/agents/osd" className={cn(btn.primary, "mt-4")}>
+            <Link href="/agents/osd" className={cn(btn.primary, "mt-4")}>
               Fix the agent
             </Link>
           </div>
@@ -90,7 +90,7 @@ export function WorkflowDetail({ w }: { w: Workflow }) {
       <Section
         title="How it works"
         action={
-          <Link href={`/automate/workflows/${w.id}/edit`} className={btn.plain}>
+          <Link href={`/workflows/${w.id}/edit`} className={btn.plain}>
             Edit on canvas
           </Link>
         }
@@ -132,7 +132,7 @@ export function WorkflowDetail({ w }: { w: Workflow }) {
             sub="When it runs, who approves, and who hears when something goes wrong"
           />
           <Row
-            href={`/automate/workflows/${w.id}/edit`}
+            href={`/workflows/${w.id}/edit`}
             icon={
               <Icon>
                 <WorkflowIcon />

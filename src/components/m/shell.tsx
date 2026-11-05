@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bot, CheckCircle2, GraduationCap, History, Sun } from "lucide-react"
+import { Bot, CheckCircle2, GraduationCap, History, Sun, Workflow } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { AccountMenu } from "@/components/m/account-menu"
@@ -11,12 +11,16 @@ import { REVIEW_ITEMS } from "@/lib/minimal"
 import { useDone } from "@/components/m/store"
 import { ACTIVITY } from "@/lib/moneiva/activity-data"
 
-/** Four places. Everything else is one tap deeper. */
+/**
+ * Two sides, one bar. The first three places are the daily work of the agents learning
+ * (approve, teach). The last two are where agents and workflows are built and watched.
+ */
 const NAV = [
-  { href: "/", label: "Today", icon: Sun },
-  { href: "/review", label: "Review", icon: CheckCircle2, count: 0 },
-  { href: "/teach", label: "Teach", icon: GraduationCap },
-  { href: "/automate", label: "Automate", icon: Bot },
+  { href: "/", label: "Today", icon: Sun, side: "work" },
+  { href: "/review", label: "Review", icon: CheckCircle2, count: 0, side: "work" },
+  { href: "/teach", label: "Teach", icon: GraduationCap, side: "work" },
+  { href: "/agents", label: "Agents", icon: Bot, side: "build" },
+  { href: "/workflows", label: "Workflows", icon: Workflow, side: "build" },
 ]
 
 function isActive(path: string, href: string) {
@@ -40,11 +44,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="mx-auto hidden items-center gap-1 rounded-full bg-secondary/70 p-1 md:flex">
-            {nav.map((n) => {
+            {nav.map((n, i) => {
               const on = isActive(path, n.href)
               return (
+                <span key={n.href} className="contents">
+                {i > 0 && nav[i - 1].side !== n.side && <span aria-hidden className="mx-1.5 h-4 w-px bg-border" />}
                 <Link
-                  key={n.href}
                   href={n.href}
                   className={cn(
                     "flex h-8 items-center gap-1.5 rounded-full px-4 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground",
@@ -58,6 +63,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     </span>
                   ) : null}
                 </Link>
+                </span>
               )
             })}
           </nav>
@@ -84,7 +90,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Phone: a tab bar, like a native app. */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {nav.map((n) => {
             const on = isActive(path, n.href)
             const Icon = n.icon

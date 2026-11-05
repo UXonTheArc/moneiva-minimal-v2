@@ -82,7 +82,7 @@ export function WorkflowCanvas({ w }: { w: Workflow }) {
     <div className="-mx-4 -mt-8 sm:-mx-6 sm:-mt-12">
       {/* Editor bar */}
       <div className="flex flex-wrap items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-6">
-        <Link href={`/automate/workflows/${w.id}`} className="inline-flex items-center gap-1 text-[15px] font-medium text-primary">
+        <Link href={`/workflows/${w.id}`} className="inline-flex items-center gap-1 text-[15px] font-medium text-primary">
           <ChevronLeft className="size-4" />
           Back
         </Link>

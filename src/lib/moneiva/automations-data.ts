@@ -17,6 +17,7 @@ export type AutomationRow = {
 
 export const AUTOMATIONS: AutomationRow[] = [
   { id: "osd", name: "Damage report follow-up", desc: "Reads the report, calls the site, then tells claims or the customer", agents: "The Operator, OS&D check calls", trigger: "New email with an OS&D report", status: "live", last: "Couldn't finish, 7:10 AM", href: "/workflows/damage-report" },
+  { id: "phonecheck", name: "OS&D phone check", desc: "Finds a good phone for each shipment in the OS&D file, then calls or texts until someone answers", agents: "OS&D check calls", trigger: "A new OS&D file arrives", status: "live", last: "9 min ago" },
   { id: "late", name: "Late load updates", desc: "Gets a new ETA from the carrier and emails the customer", agents: "Carrier check calls, The Operator", trigger: "Weekdays at 9 AM and 2 PM", status: "live", last: "2 hours ago" },
   { id: "missed", name: "Missed call follow-up", desc: "Emails callers who left a voicemail after hours", agents: "Inbound phone line, The Operator", trigger: "Voicemail left after hours", status: "live", draft: true, last: "7:05 AM today" },
   { id: "latepickup", name: "Late pickup alert", desc: "Emails the dispatcher when a pickup is 2 hours late in Acme", agents: "No agent", trigger: "Pickup 2 hours late in Acme", status: "live", last: "Yesterday, 3:40 PM" },
