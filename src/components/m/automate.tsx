@@ -4,6 +4,8 @@ import Link from "next/link"
 import { AlertCircle, ChevronRight, Plus, Workflow as WorkflowIcon } from "lucide-react"
 import { toast } from "sonner"
 
+import { cn } from "@/lib/utils"
+
 import { KindIcon } from "@/components/m/kind-icon"
 import { Card, Details, Dot, Group, Icon, Journey, PageTitle, Row, Section } from "@/components/m/ui"
 import { AGENTS, KIND_LABEL } from "@/lib/moneiva/agents-data"
@@ -23,6 +25,31 @@ function NewButton({ label }: { label: string }) {
   )
 }
 
+/** One place, two views. Each view has its own address so links and Back go to the right one. */
+function AutomateTitle({ view, lead }: { view: "agents" | "workflows"; lead: React.ReactNode }) {
+  const tab = "h-8 rounded-full px-4 text-[13px] leading-8 font-medium text-muted-foreground transition"
+  const on = "bg-card text-foreground shadow-sm"
+  return (
+    <PageTitle
+      title="Automate"
+      lead={lead}
+      action={
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-full bg-secondary/80 p-1">
+            <Link href="/agents" className={cn(tab, view === "agents" && on)}>
+              Agents
+            </Link>
+            <Link href="/workflows" className={cn(tab, view === "workflows" && on)}>
+              Workflows
+            </Link>
+          </div>
+          <NewButton label={view === "agents" ? "New agent" : "New workflow"} />
+        </div>
+      }
+    />
+  )
+}
+
 /** Agents: who does the work. Each one learns in four steps, then works on its own. */
 export function AgentsList() {
   const groups = [
@@ -31,10 +58,9 @@ export function AgentsList() {
   ]
   return (
     <>
-      <PageTitle
-        title="Agents"
-        lead="Each agent does one kind of work, like answering email or making calls. It learns from your team before it works on its own."
-        action={<NewButton label="New agent" />}
+      <AutomateTitle
+        view="agents"
+        lead="Agents do the work, like answering email or making calls. Each one learns from your team before it works on its own."
       />
       {groups.map((g) => (
         <Section key={g.title} title={g.title}>
@@ -94,8 +120,8 @@ export function WorkflowsList() {
 
   return (
     <>
-      <PageTitle
-        title="Workflows"
+      <AutomateTitle
+        view="workflows"
         lead={
           <>
             Workflows decide when work happens and in what order, with agents or without them.{" "}
@@ -103,7 +129,6 @@ export function WorkflowsList() {
             <b className="font-semibold text-foreground">{RUNS_TODAY} times</b> today.
           </>
         }
-        action={<NewButton label="New workflow" />}
       />
 
       {attention.length > 0 && (

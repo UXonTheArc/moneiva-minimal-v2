@@ -1,17 +1,6 @@
-import { Suspense } from "react"
-import { redirect } from "next/navigation"
+import { AgentsList } from "@/components/m/automate"
 
-// Old address from Minimal v1, where agents and workflows shared one place.
-async function Go({ searchParams }: PageProps<"/automate">) {
-  const { view } = await searchParams
-  redirect(view === "workflows" ? "/workflows" : "/agents")
-  return null
-}
-
-export default function Page(props: PageProps<"/automate">) {
-  return (
-    <Suspense>
-      <Go {...props} />
-    </Suspense>
-  )
+// Automate opens on its Agents view. /agents and /workflows are its two views.
+export default function AutomatePage() {
+  return <AgentsList />
 }

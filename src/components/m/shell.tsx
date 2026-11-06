@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bot, CheckCircle2, GraduationCap, History, Sun, Workflow } from "lucide-react"
+import { Bot, CheckCircle2, GraduationCap, History, Sun } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { AccountMenu } from "@/components/m/account-menu"
@@ -12,18 +12,19 @@ import { useDone } from "@/components/m/store"
 import { ACTIVITY } from "@/lib/moneiva/activity-data"
 
 /**
- * Two sides, one bar. The first three places are the daily work of the agents learning
- * (approve, teach). The last two are where agents and workflows are built and watched.
+ * Four places. Today, Review and Teach are the daily work of the agents learning.
+ * Automate is where agents and workflows are built and watched, as two views.
  */
 const NAV = [
   { href: "/", label: "Today", icon: Sun, side: "work" },
   { href: "/review", label: "Review", icon: CheckCircle2, count: 0, side: "work" },
   { href: "/teach", label: "Teach", icon: GraduationCap, side: "work" },
-  { href: "/agents", label: "Agents", icon: Bot, side: "build" },
-  { href: "/workflows", label: "Workflows", icon: Workflow, side: "build" },
+  { href: "/agents", label: "Automate", icon: Bot, side: "build" },
 ]
 
 function isActive(path: string, href: string) {
+  // Automate holds two views: Agents and Workflows.
+  if (href === "/agents") return ["/agents", "/workflows", "/automate"].some((h) => path === h || path.startsWith(h + "/"))
   return href === "/" ? path === "/" : path === href || path.startsWith(href + "/")
 }
 
@@ -90,7 +91,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Phone: a tab bar, like a native app. */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-4">
           {nav.map((n) => {
             const on = isActive(path, n.href)
             const Icon = n.icon
